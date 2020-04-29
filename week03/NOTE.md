@@ -1,69 +1,45 @@
 # 每周总结可以写在这里
-## 周作业放在了3-2随堂作业里。
 ## 对象的特殊属性
 JS中的对象本质上就是一个若干个无序的键值对组成的集合。每个键值对就是对象的属性或方法。而对象中的每个属性都对应着有属性描述符，属性描述符分为数据描述符和存储描述符。属性描述符又包含了以下几个属性。
 
-数据描述符和存取描述符均具有以下可选键值：
+数据描述符和存取描述符均具有以下可选键值(一共6个可组合的配置项)：
 
 ### configurable
-当且仅当该属性的 configurable 为 true 时，该属性描述符才能够被改变，也能够被删除。默认为 false。
-enumerable
-当且仅当该属性的 enumerable 为 true 时，该属性才能够出现在对象的枚举属性中。默认为 false。
-数据描述符同时具有以下可选键值：
+是否可以再次改动配置项
 
 ### value
-该属性对应的值。可以是任何有效的 JavaScript 值（数值，对象，函数等）。默认为 undefined。
+当前值
 
 ### writable
-当且仅当该属性的 writable 为 true 时，该属性才能被赋值运算符改变。默认为 false。
-存取描述符同时具有以下可选键值：
+是否可重写
 
 ### get
-一个给属性提供 getter 的方法，如果没有 getter 则为 undefined。该方法返回值被用作属性值。默认为 >undefined。
+读取时内部调用的函数
 
 ### set
-一个给属性提供 setter 的方法，如果没有 setter 则为 undefined。该方法将接受唯一参数，并将该参数的新值>分配给该属性。默认为 undefined。
+写入时内部调用的函数
 
-### call
-视为函数Function
+### enumerable
+是否可以遍历
 
-### Construct
-可以被new 操作符调用，根据new的规则返回对象。
 
-### DefineOwnProperty
+ES5最瞩目的升级时为对象引入属性描述符，属性描述符让我们对属性有了更精细的控制，比如这个属性是否可以修改，是否可以在for in 循环中被枚举出来、是否可以被删除。下面这几个特殊属性也是我们无法去模拟的。
 
-### callee
-视为函数参数对对象，伪数组 caller
+- Object.keys (用于收集当前对象的可遍历属性,不包括原型链上的,然后以数组的形式返回)
+- Object.getOwnPropertyNames (用于收集当前对象不可遍历属性与可遍历属性,不包括原型链上,以数组形式返回)
+- Object.getPropertyOf
+- Object.defineProperty
+- Object.defineProperties
+- Object.getOwnPropertyDescriptor
+- Object.create
+- Object.seal
+- Object.freeze
+- Object.preventExtensions
+- Object.isSealed
+- Object.Frozen
+- Object.isExtensible
 
-### GetPrototypeOf
-对应getPrototypeOf方法 获取对象原型
+特别注意：除了Object.keys这个方法外，旧版本的IE都无法模拟其他新API；除了Object.create之外，其他API的第一个参数不能是数字、字符串、布尔、null、undefined这五种字面量，否则抛出TyepeError异常
 
-### SetPrototypeOf
-对应setPrototypeOf方法 设置对象原型
-
-### GetOwnProperty
-getOwnPropertyDescriptor 获取对象私有属性的描述列表
-
-### HasProperty
-hasOwnProperty 私有属性判断
-
-### IsExtensible
-isExtensible对象是否可扩展
-
-### PreventExtensions
-preventExtension控制对象是否可以添加属性
-
-### DefineOwnProperty
-defineProperty 定义对象属性
-
-### Delete
-delete 操作符
-
-### OwnPropertyKeys
-Object.keys() Object.entries() Object.values()
-
-### Module
-视为一个引入的模块
-
-### Exports
-视为一个导出的模块
+如果对比ES3和ES6就会发现，曾经的[[ReadOnly]]、[[DontEnum]]、[[DontDelete]]更换成了[[Writable]]、[[Enumerable]]、[[Configurable]]
+其中这6个配置项可以将原有的本地属性分为2组，数据属性、访问器属性。
