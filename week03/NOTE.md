@@ -25,11 +25,45 @@ JS中的对象本质上就是一个若干个无序的键值对组成的集合。
 
 ES5最瞩目的升级时为对象引入属性描述符，属性描述符让我们对属性有了更精细的控制，比如这个属性是否可以修改，是否可以在for in 循环中被枚举出来、是否可以被删除。下面这几个特殊属性也是我们无法去模拟的。
 
-- Object.keys (用于收集当前对象的可遍历属性,不包括原型链上的,然后以数组的形式返回)
-- Object.getOwnPropertyNames (用于收集当前对象不可遍历属性与可遍历属性,不包括原型链上,以数组形式返回)
+- Object.keys 
+用于收集当前对象的可遍历属性,不包括原型链上的,然后以数组的形式返回
+
+- Object.getOwnPropertyNames 
+用于收集当前对象不可遍历属性与可遍历属性,不包括原型链上,以数组形式返回
+
 - Object.getPropertyOf
+返回参数对象的内部属性[[Prototype]],它是标准浏览器中一直使用一个私有属性proto获取(IE9  ES10  Opera没有)
+
 - Object.defineProperty
+特别注意：除了Object.keys这个方法外，旧版本的IE都无法模拟其他新API；除了Object.create之外，其他API的第一个参数不能是数字、字符串、布尔、null、undefined这五种字面量，否则抛出TyepeError异常
+如果对比ES3和ES6就会发现，曾经的[[ReadOnly]]、[[DontEnum]]、[[DontDelete]]更换成了[[Writable]]、[[Enumerable]]、[[Configurable]]
+其中这6个配置项可以将原有的本地属性分为2组，数据属性、访问器属性。
+```javascript
+// 在标准浏览器中，如果不支持Object.defineProperty，可以勉强模拟出来
+if(typeof Object.defineProperty !== 'function') {
+    Object.defineProperties = function(obj, descs) {
+        if('value' in desc) {
+            obj[prop] = desc.value
+        }
+        if('get' in desc) {
+            obj.__defineGetter__(prop, desc.get)
+        }
+        if('set' in desc) {
+            obj.__definedSetter__(prop, desc.set)
+        } 
+        return obj
+    }
+}
+```
+
 - Object.defineProperties
+就是Object.defineProperty的加强版，它能一下子处理多个属性
+```javascript
+
+
+```
+
+
 - Object.getOwnPropertyDescriptor
 - Object.create
 - Object.seal
@@ -39,7 +73,5 @@ ES5最瞩目的升级时为对象引入属性描述符，属性描述符让我�
 - Object.Frozen
 - Object.isExtensible
 
-特别注意：除了Object.keys这个方法外，旧版本的IE都无法模拟其他新API；除了Object.create之外，其他API的第一个参数不能是数字、字符串、布尔、null、undefined这五种字面量，否则抛出TyepeError异常
 
-如果对比ES3和ES6就会发现，曾经的[[ReadOnly]]、[[DontEnum]]、[[DontDelete]]更换成了[[Writable]]、[[Enumerable]]、[[Configurable]]
-其中这6个配置项可以将原有的本地属性分为2组，数据属性、访问器属性。
+
