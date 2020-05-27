@@ -1,0 +1,24 @@
+{
+  "name": "toy-browser",
+  "version": "1.0.0",
+  "description": "winter_homework_week7",
+  "main": "main.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "css": "^2.2.4",
+    "images": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitLuoSiyu/Frontend-01-Template.git"
+  },
+  "author": "luosiyu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GitLuoSiyu/Frontend-01-Template/issues"
+  },
+  "homepage": "https://github.com/GitLuoSiyu/Frontend-01-Template#readme"
+}
