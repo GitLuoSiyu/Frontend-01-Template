@@ -57,6 +57,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'descendant'
       break;
     }
+    
     case '>': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -66,6 +67,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'children'
       break;
     }
+
     case '+': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -75,6 +77,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'next'
       break;
     }
+
     case '~': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -84,6 +87,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'after'
       break;
     }
+
     case ':': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -93,6 +97,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'pseudo'
       break;
     }
+
     case '.': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -102,6 +107,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'class';
       break;
     }
+
     case '#': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -111,6 +117,7 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'id'
       break;
     }
+
     case '[': {
       if (Object.keys(cur)[1]) {
         emit(cur)
@@ -120,11 +127,13 @@ function dealSelector(char, isEmit = false) {
       cur.type = 'attr'
       break;
     }
+
     case ']': {
       emit(cur)
       delete cur.type;
       break;
     }
+
     case '*': {
       cur.type = 'universal'
       cur.val = char;
@@ -132,6 +141,7 @@ function dealSelector(char, isEmit = false) {
       delete cur.type;
       break;
     }
+
     default: {
       if (cur.type) {
         cur.val += char
@@ -144,6 +154,7 @@ function dealSelector(char, isEmit = false) {
       }
       break;
     }
+
   }
 }
 
