@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicTacToc</title>
+  <style>
+    .cell {
+      display: inline-block;
+      background: lightskyblue;
+      width: 100px;
+      height: 100px;
+      margin: 2px;
+      font-size: 50px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div id="board"></div>
+</body>
+
+<script>
+  // let pattern = [
+  //   [0, 2, 0],
+  //   [0, 1, 0],
+  //   [1, 0, 2]
+  // ];
+  let pattern = [
+    [0,0,0],
+    [0,0,0],
+    [0,0,0]
+  ]
+  let color = 1;
+
+  // 绘制棋谱
+  function show() {
+    let board = document.getElementById('board');
+    board.innerHTML = '';
+    for(let i = 0; i < 3; i++) {
+      for(let j = 0; j < 3; j++) {
+        let cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.innerHTML = pattern[i][j] === 2 ? '❌' :
+          pattern[i][j] === 1 ? '⭕️' :
+          '';
+        cell.addEventListener('click', () => userMove(i, j));
+        board.appendChild(cell);
+      }
+      board.appendChild(document.createElement('br'));
+    }
+  }
+
+  // 用户落子
+  function userMove(x, y) {
+    pattern[x][y] = color;
+    if (check(pattern, color)) {
+      alert(color === 2 ? '❌ is winner' : '⭕️ is winner');
+    }
+    color = 3 - color;
+    show();
+    computerMove();
+    if (willWin(pattern, color)) {
+      console.log(color === 2 ? '❌ will win' : '⭕️ will win');
+    }
+  }
+
+  // 机器落子
+  function computerMove() {
+    let choice = bestChoice(pattern, color);
+    if (choice.point) {
+      pattern[choice.point[1]][choice.point[0]] = color;
+    }
+    if (check(pattern, color)) {
+      alert(color === 2 ? '❌ is winner' : '⭕️ is winner');
+    }
+    color = 3 - color;
+    show();
+  }
+
+  // 确认胜负
+  function check(pattern, color) {
+    // row
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[i][j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true;
+      }
+    }
+    // column
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j][i] !== color) {
+          win = false;
+        }
+      }
+      if (win)
+        return true;
+    }
+    // 反对角线
+    {
+      let win = false;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j][2-j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true;
+      }
+    }
+    // 对角线
+    {
+      let win = false;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j][j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true;
+      }
+    }
+    return null
+  }
+
+  // 拷贝数组
+  function clone(pattern) {
+    return JSON.parse(JSON.stringify(pattern));
+  }
+
+  // 胜利判断
+  function willWin(pattern, color) {
+    for (let i = 0; i < 3; i++) {
+      for(let j = 0; j < 3; j++) {
+        if (pattern[i][j] !== 0) {
+          continue;
+        } else {
+          let tmp = clone(pattern);
+          tmp[i][j] = color;
+          if (check(tmp, color)) {
+            return true;
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  // 棋谱功能
+  let openings = new Map();
+
+  openings.set([
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+  ].toString(), {
+    point: [1,1],
+    result: 0
+  })
+
+  // 最佳落子点和结果
+  function bestChoice(pattern, color) {
+    console.log(pattern);
+    if (openings.has(pattern.toString())) {
+      return openings.get(pattern.toString());
+    }
+    let point = willWin(pattern, color);
+    if (point) {
+      return {
+        point: point,
+        result: 1 // 1 胜利， 0 平局， -1 落败
+      }
+    }
+
+    let result = -1;
+
+    for(let i = 0; i < 3; i++) {
+      for(let j = 0; j < 3; j++) {
+        if (pattern[i][j] !== 0) {
+          continue;
+        }
+
+        let tmp = clone(pattern);
+        tmp[i][j] = color;
+        let opp = bestChoice(tmp, 3-color);
+        if ( - opp.result >= result) {
+          point = [j, i];
+          result = - opp.result;
+        }
+      }
+    }
+    return {
+      point: point,
+      result: point ? result : 0
+    }
+  }
+
+  show();
+
+</script>
+
+</html>
