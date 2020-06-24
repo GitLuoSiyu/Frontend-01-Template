@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>极客时间寻路算法-进阶版</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <script src="./lib/phaser.min.js"></script>
+  <script src="./lib/phaser-debug.js"></script>
+  <script src="./js/phaserex.findpath.js"></script>
+  <script src="./js/phaserex.fadeandplay.js"></script>
+  <script src="./js/xtilemap.js"></script>
+  <script src="./js/rolesprite.js"></script>
+  <!-- 游戏界面 -->
+  <script src="./js/gamemain.js"></script>
+  <script src="./js/shopmain.js"></script>
+  <script src="./js/guidemain.js"></script>
+  <script src="./js/helpmain.js"></script>
+  <!-- 补丁 -->
+  <!-- <script src="./lib/BootState.js"></script> -->
+  <script src="./lib/patch262.js"></script>
+</head>
+<body>
+
+  <div id="gamebox"></div>
+  <script>
+    window.onload = function(){
+      var game;
+      game = new Phaser.Game(1000, 700, Phaser.CANVAS, "gamebox");
+      var loadmusic;
+      game.state.add('boot', Boot);
+      game.state.add('loading', Loading);
+      game.state.add('menu', Menu);
+      game.state.add('main', GameMain);  // 主游戏
+      game.state.start('boot')
+    }
+
+    function Boot(game){
+      this.preload = function() {
+        game.load.spritesheet('loading', './img/loading.png', 80, 24);
+      }
+
+      this.create = function() {
+        if(!game.device.desktop){
+          this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+        }
+        game.state.start("loading")
+      }
+    }
+
+    function Loading(game) {
+      this.preload = function() {
+        var loading = game.add.sprite(game.width/2, game.height/2, "loading");
+        loading.anchor.setTo(0.5);
+        loading.animations.add("loading", [0,1,2],5,true);
+        loading.animations.play("loading");
+        // 加载loading的同时 加载其他资源
+
+        // 加载玩家
+        game.load.spritesheet("player", "./img/player.png", 38, 50);
+
+        // 加载NPC
+        game.load.spritesheet("npc", "./img/npc.png", 64, 64);
+
+        // 加载人物
+        game.load.spritesheet("dog", "./img/dog.png", 64, 72);
+
+        // 加载环境物品、树木
+        game.load.spritesheet("mapitems", "./img/items.png", 64, 72);
+
+        // 加载地图纹理
+        game.load.image("maptiles", "./img/maptiles.png");
+
+        // 加载地图参数json
+        game.load.tilemap("worldmap", "./js/worldmap.json", null, Phaser.Tilemap.TILED_JSON);
+
+        // 加载黑色砖块区域，不可行走区域
+        game.load.image("fadeMask", "./img/fademask.png")
+      }
+      this.create = function() {    
+        game.state.start("menu")
+      }
+    }
+
+    function Menu(game) {
+      this.preload = function() {
+        // 主菜单的背景音乐
+        game.load.audio("startAudio","./img/load.ogg");
+
+        // 关卡设置
+        game.gameData = {
+          // 地图的参数入口，前两个参数是坐标值，后两个是对应map入口
+          maps:[
+          {name:"map-0",entries:[[7,14,1,1]]},
+          {name:"map-1",entries:[[0,8,2,1],[7,0,0,0],[15,12,3,0]]},
+          {name:"map-2",entries:[[10,0,2,0],[15,7,1,0],[11,15,4,1]]},
+          {name:"map-3",entries:[[0,8,1,2],[9,0,3,1],[13,15,3,2]]},
+          {name:"map-4",entries:[[0,11,5,0],[5,0,2,2],[7,15,4,2]]},
+          {name:"map-5",entries:[[15,4,4,0]]},
+          ],
+          currMap:0,      // 初始化地图关卡
+          currPos:[7,5],  // 人物初始坐标
+          currFace:"DOWN",// 初始化面向方向
+          currMusic:"",   // 初始化第一关卡的音乐
+          items:[],       // 场景物品树木
+        }
+
+      }
+      this.create = function() {
+        loadmusic = game.add.audio("startAudio");
+        loadmusic.play();
+
+        var txt = game.add.text(650, 200, "开启本地Http-server，打开本文件，点击屏幕即开始 极客时间寻路算法 进阶版", {fontSize:"16px",fill:"#FFFFFF"});
+        txt.anchor.setTo(0.8);
+        game.input.onDown.add(function(){
+          // 点击执行的回调
+          loadmusic.stop();
+          game.state.start("main");
+        }, this)
+      }
+
+      this.play = function(){
+        loadmusic.stop();
+        game.state.start("main");
+      }
+
+      this.guide = function(){
+        loadmusic.stop();
+        game.state.start("guide");
+      }
+
+      this.shop = function(){
+        loadmusic.stop();
+        game.state.start("shop");
+      }
+
+      this.help = function(){
+        loadmusic.stop();
+        game.state.start("help");
+      }
+    }
+    
+  </script>
+</body>
+</html>

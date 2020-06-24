@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>课堂上的寻路算法</title>
+    <style>
+        .cell {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: gray;
+            border-bottom: 1px solid white;
+            border-right: 1px solid white;
+            vertical-align: middle;
+        }
+
+        .cell.selected {
+            background-color: black;
+        }
+
+        .cell.lightgreen {
+            background-color: lightgreen;
+        }
+
+        .cell.red {
+            background-color: red;
+        }
+
+        .cell.pink {
+            background-color: pink;
+        }
+
+        #container {
+            width: 701px;
+            line-height: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container"></div>
+    <button onclick="gameMap.save()">save</button>
+    <button onclick="gameMap.clear()">clear</button>
+
+    <script src="./geek/tool.js"></script>
+    <script src="./geek/map.js"></script>
+    <script src="./geek/path.js"></script>
+    <script>
+        let gameMap = new GameMap('container');
+        let gamePath = new GamePath(gameMap.map, BinaryHeap);
+        gamePath.find([0, 0], [50, 50]);
+    </script>
+</body>
+
+</html>
