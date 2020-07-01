@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <!--  -->
+    <script>
+        let regexp = /([0-9\.]+)|([ ]+)|([\r\n]+)|(\+)|(\-)|(\/)|(\*)/g;
+        let dictionary = ["Number", "Whitespace", "LineTerminator", "+", "-", "*", "/"]
+
+        function* tokenize(source) {
+            let result = null;
+            let lastIndex = 0;
+
+            do {
+                // 匹配
+                lastIndex = regexp.lastIndex;
+                result = regexp.exec(source);
+                // 判断
+                if (!result) {
+                    break;
+                }
+                // 出现了无法识别的字符  则报错  
+                if (regexp.lastIndex - lastIndex > result[0].length) {
+                    throw new Error(`Uncaught Token:
+                    ${source.slice(lastIndex, regexp.lastIndex - result[0].length)}`);
+                }
+                // 生成token
+                let token = {
+                    type: null,
+                    value: null
+                }
+
+                for (let i = 0; i < dictionary.length; i++) {
+                    if (result[i + 1]) {
+                        token.type = (dictionary[i])
+                    }
+                }
+                token.value = (result[0]);
+                yield token;
+            } while (result);
+            yield {
+                type: 'EOF'
+            }
+        }
+
+        function Expression(source) {
+            if (source[0].type === 'AdditiveExpression' && source[1].type === 'EOF') {
+                let node = {
+                    type: 'Expression',
+                    children: [source.shift(), source.shift()]
+                }
+                source.unshift(node);
+                return node;
+            }
+
+            AdditiveExpression(source);
+            return Expression(source);
+        }
+
+        function AdditiveExpression(source) {
+            if (!Array.isArray(source)) {
+                return null
+            }
+            if (source[0].type === 'Number') {
+                MultiplicativeExpression(source);
+                return AdditiveExpression(source);
+            }
+
+            if (source[0].type === 'MultiplicativeExpression') {
+                let node = {
+                    type: 'AdditiveExpression',
+                    children: [source.shift()],
+                }
+                source.unshift(node);
+                return AdditiveExpression(source);
+            }
+
+            if (source[0].type === 'AdditiveExpression' && source.length > 1 &&
+                source[1].type === '+') {
+                let node = {
+                    type: 'AdditiveExpression',
+                    children: [source.shift(), source.shift()],
+                }
+                MultiplicativeExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return AdditiveExpression(source);
+            }
+
+            if (source[0].type === 'AdditiveExpression' && source.length > 1 &&
+                source[1].type === '-') {
+                let node = {
+                    type: 'AdditiveExpression',
+                    children: [source.shift(), source.shift()],
+                }
+                MultiplicativeExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return AdditiveExpression(source);
+            }
+
+            // 第一个节点之后， 如果是未知字符，则停止
+            if (source[0].type === 'AdditiveExpression') {
+                return source[0];
+            }
+            // 未识别
+            throw new Error();
+
+        }
+
+        // 实现 连乘/除 产生式
+        function MultiplicativeExpression(source = []) {
+            if (!Array.isArray(source)) {
+                return null
+            }
+            if (source[0].type === 'Number') {
+                let node = {
+                    type: 'MultiplicativeExpression',
+                    children: source.shift(),
+                }
+                source.unshift(node);
+                return MultiplicativeExpression(source);
+            }
+
+            if (source[0].type === 'MultiplicativeExpression' && source.length > 1 &&
+                source[1].type === '*') {
+                let node = {
+                    type: 'MultiplicativeExpression',
+                    children: [source.shift(), source.shift(), source.shift()],
+                }
+                source.unshift(node);
+                return MultiplicativeExpression(source);
+            }
+
+            if (source[0].type === 'MultiplicativeExpression' && source.length > 1 &&
+                source[1].type === '/') {
+                let node = {
+                    type: 'MultiplicativeExpression',
+                    children: [source.shift(), source.shift(), source.shift()],
+                }
+                source.unshift(node);
+                return MultiplicativeExpression(source);
+            }
+
+            // 第一个节点之后， 如果是未知字符，则停止
+            if (source[0].type === 'MultiplicativeExpression') {
+                return source[0];
+            }
+            // 未识别
+            throw new Error();
+        }
+
+        let source = [];
+        for (let token of tokenize("5 + 1024 * 2")) {
+            // 过滤空格 和 换行
+            if (!["Whitespace", "LineTerminator"].includes(token.type)) {
+                source.push(token)
+            }
+
+        }
+        const res = Expression(source);
+        console.log(res);
+    </script>
+</body>
+
+</html>
