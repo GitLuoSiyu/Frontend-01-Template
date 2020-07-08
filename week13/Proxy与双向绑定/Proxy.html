@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #color {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>proxy</h1>
+    <input id="r" type="range" min="0" max="255">
+    <input id="g" type="range" min="0" max="255">
+    <input id="b" type="range" min="0" max="255">
+
+    <div id="color"></div>
+</body>
+<script>
+    let object = {
+        a: 1,
+        b: 2
+    }
+    const handlerMap = new Map();
+
+    const reactivities = new Map();
+
+    let usedReactivies = [];
+
+    function effect(handler) {
+        usedReactivies = [];
+        handler();
+        console.log(usedReactivies)
+        for (let usedReactivity of usedReactivies) {
+            let [obj, prop] = usedReactivity;
+            if (!handlerMap.has(obj)) {
+                handlerMap.set(obj, new Map());
+            }
+
+            if (!handlerMap.get(obj).has(prop)) {
+                handlerMap.get(obj).set(prop, []);
+            }
+
+            handlerMap.get(obj).get(prop).push(handler)
+        }
+    }
+
+    function reactivity(obj) {
+        if (reactivities.has(obj)) {
+            return reactivities.get(obj)
+        }
+
+        let proxy = new Proxy(obj, {
+            get(obj, prop) {
+                console.log('get', obj, prop)
+                if (typeof obj[prop] === 'object') {
+                    return reactivity(obj)
+                }
+                usedReactivies.push([obj, prop])
+                return obj[prop];
+            },
+            set(obj, prop, val) {
+                obj[prop] = val;
+                console.log('set', obj, prop, val)
+                console.log(handlerMap)
+                if (handlerMap.get(obj)) {
+                    if (handlerMap.get(obj).get(prop)) {
+                        for (let handler of handlerMap.get(obj).get(prop)) {
+                            handler();
+                        }
+                    }
+                }
+                return obj[prop];
+            }
+        })
+        reactivities.set(obj, proxy)
+
+        reactivities.set(proxy, proxy)
+        return proxy;
+    }
+
+    let dummy;
+    let p = reactivity({
+        r: 100,
+        g: 100,
+        b: 100
+    });
+    effect(() => document.getElementById('r').value = p.r)
+    document.getElementById('r').addEventListener('input', (e) => {
+        p.r = e.target.value;
+    })
+
+    effect(() => document.getElementById('g').value = g.r)
+    document.getElementById('g').addEventListener('input', (e) => {
+        p.g = e.target.value;
+    })
+
+    effect(() => document.getElementById('b').value = b.r)
+    document.getElementById('b').addEventListener('input', (e) => {
+        p.b = e.target.value;
+    })
+
+
+    effect(() => document.getElementById('color').style.backgroundColor = `rgb(${p.r},${p.g},${p.b})`)
+</script>
+
+</html>

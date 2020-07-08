@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        /* 一般的非 KMP算法 但算法复杂度较高(M*N)  */
+        function find(source, pattern) {
+            for (let i = 0; i < source.length; i++) {
+                let matched = true;
+                for (let j = 0; j < pattern.length; j++) {
+                    if (source[i + j] !== pattern[j]) {
+                        matched = false;
+                        break;
+                    }
+                }
+                if (matched) return true;
+
+            }
+            return false;
+        }
+        find('abcxyz', 'xy')
+    </script>
+</body>
+
+</html>
