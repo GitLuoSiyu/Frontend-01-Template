@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <title>Carousel Component</title>
+    <style>
+        .carousel {
+            width: 500px;
+            height: 300px;
+            white-space: nowrap;
+            outline: solid 1px blue;
+            overflow: hidden;
+        }
+
+        .carousel>img {
+            width: 500px;
+            height: 300px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        class Carousel {
+            constructor() {
+                this.data = null;
+                this.root = null;
+            }
+
+            render() {
+                this.root = document.createElement('div');
+                this.root.classList.add('carousel');
+
+                for (var d of this.data) {
+                    var element = document.createElement('img');
+                    element.src = d;
+
+                    this.root.appendChild(element);
+                }
+
+
+
+
+                var position = 0;
+                var nextPic = () => {
+                    let nodes = this.root.childNodes[position];
+                    nodes.style.transform = `translateX(${-100 * position}%)`;
+                    position++;
+                    setTimeout(nextPic, 3000);
+                }
+
+                nextPic();
+            }
+        }
+
+        // create
+        var carousel = new Carousel();
+
+        // update
+        carousel.data = [
+            "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+            "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+            "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+            "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+        ];
+        carousel.render();
+
+        // mount
+        document.getElementById('container').appendChild(carousel.root);
+    </script>
+</body>
+
+</html>

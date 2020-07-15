@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <title>Carousel Component (增加动画)</title>
+    <style>
+        .carousel {
+            width: 500px;
+            height: 300px;
+            outline: 1px solid blue;
+            white-space: nowrap;
+            margin: 0 auto;
+            zoom: 0.25;
+        }
+
+        .carousel>img {
+            width: 500px;
+            height: 300px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+
+    </div>
+</body>
+<script>
+    class Carousel {
+        constructor() {
+            this.data = null;
+            this.root = null;
+        }
+
+        render() {
+            this.root = document.createElement('div');
+            this.root.classList.add('carousel');
+            for (let d of this.data) {
+                let element = document.createElement('img');
+                element.src = d;
+
+                this.root.appendChild(element);
+            }
+
+            let position = 0;
+            let nextPic = () => {
+                let nextPostion = (position + 1) % this.data.length;
+                let currentNode = this.root.childNodes[position];
+                let nextNode = this.root.childNodes[nextPostion];
+
+                currentNode.style.transition = 'ease 0s';
+                nextNode.style.transition = 'ease 0s';
+
+                // 起始位置
+                currentNode.style.transform = `translateX(${-100 * position}%)`;
+                nextNode.style.transform = `translateX(${100 - 100 * nextPostion}%)`;
+
+                setTimeout(() => {
+                    currentNode.style.transition = 'ease 0.5s';
+                    nextNode.style.transition = 'ease 0.5s';
+
+                    // 终止位置
+                    currentNode.style.transform = `translateX(${- 100 - 100 * position}%)`;
+                    nextNode.style.transform = `translateX(${-100 * nextPostion}%)`;
+
+                    position = nextPostion;
+                }, 16);
+
+                setTimeout(nextPic, 3000);
+            }
+            setTimeout(nextPic, 3000);
+        }
+    }
+
+    // create
+    let carousel = new Carousel();
+
+    // update
+    carousel.data = [
+        "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+        "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+        "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+        "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+    ];
+    carousel.render();
+
+    // amount
+    document.getElementById('container').appendChild(carousel.root);
+</script>
+
+</html>
