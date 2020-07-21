@@ -22,8 +22,7 @@ function Timeline() {
  * 时间轴上每一次回调执行的函数
  * @param time 从动画开始到当前执行的时间
  */
-Timeline.prototype.onenterframe = function (time) {
-};
+Timeline.prototype.onenterframe = function (time) {};
 
 /**
  * 动画开始
@@ -105,7 +104,7 @@ var requestAnimationFrame = (function () {
 		window.webkitRequestAnimationFrame ||
 		window.mozRequestAnimationFrame ||
 		window.oRequestAnimationFrame ||
-			//所有都不支持，用setTimeout兼容
+		//所有都不支持，用setTimeout兼容
 		function (callback) {
 			return window.setTimeout(callback, (callback.interval || DEFAULT_INTERVAL)); // make interval as precise as possible.
 		};

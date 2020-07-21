@@ -1,20 +1,15 @@
 ## 根据winter老师动画改造的
 
-### npm 安装
 
-```
-$ npm install frame-animation
-```
 
-### 示例
-
-#### HTML
+## 调用示例
+#### HTML部分
 
 ```html
 <div id="demo"></div>
 ```
 
-#### CSS
+#### CSS部分
 
 ```css
 #demo {
@@ -24,9 +19,10 @@ $ npm install frame-animation
 }
 ```
 
-#### JavaScript
+#### JS部分
 
 ``` javascript
+// 使用示例
 var animation = require("frame-animation");
 
 var ele = document.getElementById('demo');
@@ -36,9 +32,8 @@ var demoAnimation = animation().changePosition(ele, positions).repeat();
     demoAnimation.start(200);
 
 ```
-这种链式调用的语法，是不是很爽呢（妈妈再也不用担心我的动画）
 
-## animation提供的接口
+## 本animation函数提供的功能接口
 
 * loadImage(imagelist)  //预加载图片
 * changePosition(ele,positions)  //通过改变元素的backgroud-position实现动画
@@ -52,25 +47,3 @@ var demoAnimation = animation().changePosition(ele, positions).repeat();
 * pause() //动画暂停
 * restart() //动画从上一次暂停处重新执行
 * dispose() //释放资源
-
-## 如何构建
-animation的源码是基于webpack构建的
-
-首先，clone项目源码
-```bash
-git clone https://github.com/ustbhuangyi/animation.git
-```
-
-安装依赖
-```bash
-cd animation
-npm install
-```
-测试demo页
-
-```bash
-npm run dev
-```
-打开浏览器访问如下地址, 查看效果
-
-> localhost:9090

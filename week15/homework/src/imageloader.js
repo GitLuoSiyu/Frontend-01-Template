@@ -98,8 +98,7 @@ function loadImage(images, callback, timeout) {
 			try {
 				//删除window上注册的属性
 				delete window[item.id];
-			}
-			catch (e) {
+			} catch (e) {
 
 			}
 			//每张图片加载完成，计数器减一，当所有图片加载完毕且没有超时的情况下，

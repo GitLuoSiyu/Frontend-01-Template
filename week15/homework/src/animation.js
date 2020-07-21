@@ -337,4 +337,3 @@ function createAnimation() {
 createAnimation.version = __VERSION__;
 
 module.exports = createAnimation;
-
