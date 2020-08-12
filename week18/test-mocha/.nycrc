@@ -1,0 +1,7 @@
+{
+  "all": true,
+  "include": [
+    "src/*.js"
+  ],
+  "extents": "@istanbuljs/nyc-config-babel"
+}
